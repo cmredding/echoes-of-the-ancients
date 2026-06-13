@@ -83,7 +83,8 @@
 /* ============== core setup ============== */
 const PAL=['#000000','#0000aa','#00aa00','#00aaaa','#aa0000','#aa00aa','#aa5500','#aaaaaa',
            '#555555','#5555ff','#55ff55','#55ffff','#ff5555','#ff55ff','#ffff55','#ffffff'];
-const Wl=320,Hl=200,S=3;
+const Wl=240,Hl=240,S=3;
+const SBARY=Hl-24; // status bar y = 216
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 cv.width=Wl*S;cv.height=Hl*S;ctx.imageSmoothingEnabled=false;
 function rect(x,y,w,h,c){ctx.fillStyle=PAL[c];ctx.fillRect(Math.round(x*S),Math.round(y*S),Math.round(w*S),Math.round(h*S));}
@@ -560,53 +561,53 @@ function drawPlayer(px,py){
  rect(px+4,py+6,8,6,9);rect(px+4,py+12,3,3,1);rect(px+9,py+12,3,3,1);
 }
 function statusBar(){
- rect(0,176,320,24,0);rect(0,176,320,1,8);
+ rect(0,SBARY,Wl,24,0);rect(0,SBARY,Wl,1,8);
  const p=G.p;
- txt("HP "+p.hp+"/"+p.mhp,4,180,p.hp<p.mhp/4?12:10);
- txt("MP "+p.mp,76,180,11);
- txt("G "+p.gold,120,180,14);
- txt("C "+p.coins,170,180,11);
- txt("Lv"+p.lvl,210,180,15);
+ txt("HP "+p.hp+"/"+p.mhp,4,SBARY+4,p.hp<p.mhp/4?12:10);
+ txt("MP "+p.mp,76,SBARY+4,11);
+ txt("G "+p.gold,120,SBARY+4,14);
+ txt("C "+p.coins,170,SBARY+4,11);
+ txt("Lv"+p.lvl,210,SBARY+4,15);
  const j=(p.jewels.d1?1:0)+(p.jewels.d2?1:0)+(p.jewels.d3?1:0);
- txt("Jewels "+j+"/3",244,180,13);
- txt(WEAPONS[p.wpn][0]+" / "+ARMOR[p.arm][0],4,190,7);
- if(p.torch>0)txt("Torch x"+p.torch,170,190,6);
- if(G.msgT>0){rect(0,166,320,10,0);txt(G.msg,4,167,14);}
+ txt("Jewels "+j+"/3",148,SBARY+4,13);
+ txt(WEAPONS[p.wpn][0]+" / "+ARMOR[p.arm][0],4,SBARY+14,7);
+ if(p.torch>0)txt("Torch x"+p.torch,148,SBARY+14,6);
+ if(G.msgT>0){rect(0,SBARY-10,Wl,10,0);txt(G.msg,4,SBARY-9,14);}
 }
 function drawWalk(){
  const m=curMap(),p=G.p;
- const VW=20,VH=11;
+ const VW=15,VH=13,TY=4;
  let ox=clamp(p.x-10,0,Math.max(0,m[0].length-VW));
  let oy=clamp(p.y-5,0,Math.max(0,m.length-VH));
- rect(0,0,320,176,0);
+ rect(0,0,Wl,SBARY,0);
  for(let y=0;y<VH;y++)for(let x=0;x<VW;x++){
   const ch=tileAt(m,x+ox,y+oy);
-  if(ch!==undefined)drawTile(ch,x*16,y*16,G.t);
+  if(ch!==undefined)drawTile(ch,x*16,y*16+TY,G.t);
  }
- drawPlayer((p.x-ox)*16,(p.y-oy)*16);
+ drawPlayer((p.x-ox)*16,(p.y-oy)*16+TY);
  statusBar();
 }
 function drawBigMap(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  ctxt("THE GREAT TAPESTRY",6,14);
- const m=OVERWORLD,cw=7,chh=7,ox=(320-36*cw)/2,oy=22;
+ const m=OVERWORLD,cw=6,chh=7,ox=(Wl-36*cw)/2,oy=22;
  const col={'~':1,',':2,'t':2,'^':8,'s':14,'=':6,'M':15,'T':12,'U':12,'1':0,'2':0,'3':0};
  for(let y=0;y<m.length;y++)for(let x=0;x<m[y].length;x++){
   const ch=m[y][x];rect(ox+x*cw,oy+y*chh,cw,chh,col[ch]!==undefined?col[ch]:0);
   if("MTU123".indexOf(ch)>=0){txt(ch==='M'?'M':ch,ox+x*cw+1,oy+y*chh,ch==='M'?0:15);}
  }
  rect(ox+G.p.x*cw,oy+G.p.y*chh,cw,chh,14);
- ctxt("M museum  T/U towns  1 2 3 dungeons - you are the yellow square",182,7);
- ctxt("press any key",192,8);
+ ctxt("M museum  T/U towns  1 2 3 dungeons - you are the yellow square",188,7);
+ ctxt("press any key",202,8);
 }
 /* first-person dungeon */
-const FR=[[0,0,320,168],[56,30,208,108],[104,58,112,52],[132,74,56,20],[146,81,28,6]];
+const FR=[[0,0,240,216],[42,39,156,139],[78,75,84,67],[99,95,42,26],[110,104,21,8]];
 function frontRect(d){return FR[Math.min(d,FR.length-1)];}
 function drawDungeon(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  /* ceiling & floor */
- rect(0,0,320,84,0);
- rect(0,84,320,84,8);
+ rect(0,0,Wl,SBARY/2,0);
+ rect(0,SBARY/2,Wl,SBARY/2,8);
  const lit=G.p.torch>0?3:1;
  const d0=DIRS[G.dir],dl=DIRS[(G.dir+3)%4],dr=DIRS[(G.dir+1)%4];
  const shades=[7,8,8,0];
@@ -635,16 +636,16 @@ function drawDungeon(){
    rect(f[0]+f[2]/3,f[1],f[2]/3,f[3],11);
   }
  }
- if(G.p.torch<=0){txt("It is very dark. (Buy torches in town!)",30,150,6);}
+ if(G.p.torch<=0){txt("It is very dark. (Buy torches in town!)",10,SBARY-40,6);}
  const cell=dunCell(G.dx,G.dy);
- if(cell==='<')txt("The way out shimmers here.",80,150,11);
- txt(DUNNAME[G.dun]+"  facing "+"NESW"[G.dir],4,169,7);
+ if(cell==='<')txt("The way out shimmers here.",30,SBARY-40,11);
+ txt(DUNNAME[G.dun]+"  facing "+"NESW"[G.dir],4,SBARY-7,7);
  statusBar();
 }
 function drawDunMap(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  ctxt(DUNNAME[G.dun]+" - explored",8,14);
- const m=DUNS[G.dun],cw=12,ch=12,ox=(320-12*cw)/2,oy=28;
+ const m=DUNS[G.dun],cw=12,ch=12,ox=(Wl-12*cw)/2,oy=28;
  for(let y=0;y<m.length;y++)for(let x=0;x<m[y].length;x++){
   if(!G.visited[x+','+y]){
    /* show visited cells and adjacent walls */
@@ -660,7 +661,7 @@ function drawDunMap(){
  rect(ox+G.dx*cw+3,oy+G.dy*ch+3,6,6,14);
  const d=DIRS[G.dir];
  rect(ox+G.dx*cw+5+d[0]*4,oy+G.dy*ch+5+d[1]*4,2,2,12);
- ctxt("press any key",186,8);
+ ctxt("press any key",218,8);
 }
 function enemySprite(seed,col,cx,cy,sz){
  let s=seed;
@@ -674,79 +675,79 @@ function enemySprite(seed,col,cx,cy,sz){
 }
 function drawCombat(){
  const c=G.combat;
- rect(0,0,320,200,0);
- rect(0,0,320,110,c.boss?5:1);
- rect(0,0,320,110,0);rect(8,6,304,100,c.boss?5:1);rect(10,8,300,96,0);
- enemySprite(c.seed,c.col,160,60,5);
+ rect(0,0,Wl,Hl,0);
+ rect(0,0,Wl,110,c.boss?5:1);
+ rect(0,0,Wl,110,0);rect(6,6,228,100,c.boss?5:1);rect(8,8,224,96,0);
+ enemySprite(c.seed,c.col,120,60,5);
  ctxt(c.name,14,15);
  /* enemy hp bar */
- rect(90,96,140,6,8);rect(90,96,Math.max(0,140*c.hp/c.mhp),6,12);
+ rect(50,96,140,6,8);rect(50,96,Math.max(0,140*c.hp/c.mhp),6,12);
  /* log */
  for(let i=0;i<c.log.length;i++)txt(c.log[i],14,114+i*9,i===c.log.length-1?15:7);
  /* menu */
  if(c.sub==='spell'){
-  rect(220,112,96,40,1);rect(222,114,92,36,0);
+  rect(140,112,96,40,1);rect(142,114,92,36,0);
   const six=c.spellIx||0;
-  txt((six===0?">":" ")+"Firebolt 4mp",226,118,six===0?15:14);
-  txt((six===1?">":" ")+"Mend     3mp",226,128,six===1?15:10);
-  txt("B/Esc back",226,138,8);
+  txt((six===0?">":" ")+"Firebolt 4mp",146,118,six===0?15:14);
+  txt((six===1?">":" ")+"Mend     3mp",146,128,six===1?15:10);
+  txt("B/Esc back",146,138,8);
  }else{
   const items=["Attack","Cast","herB","Run"];
-  rect(232,112,84,46,8);rect(234,114,80,42,0);
-  for(let i=0;i<4;i++)txt((G.menuIx===i?">":" ")+items[i],238,117+i*10,G.menuIx===i?14:7);
+  rect(152,112,84,46,8);rect(154,114,80,42,0);
+  for(let i=0;i<4;i++)txt((G.menuIx===i?">":" ")+items[i],158,117+i*10,G.menuIx===i?14:7);
  }
  statusBar();
 }
 function drawShop(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  ctxt("GENERAL STORE - "+(G.loc==='bryn'?'BRYN':'SALTMERE'),12,14);
  ctxt("gold: "+G.p.gold,24,14);
  const its=G.shop.items;
  for(let i=0;i<its.length;i++){
   const sel=i===G.shop.ix;
   txt((sel?"> ":"  ")+its[i][2],60,44+i*12,sel?15:7);
-  txt(its[i][3]+"g",230,44+i*12,sel?14:6);
+  txt(its[i][3]+"g",185,44+i*12,sel?14:6);
  }
- ctxt("Enter to buy - Esc to leave",170,8);
+ ctxt("Enter to buy - Esc to leave",200,8);
  statusBar();
 }
 function drawText(){
  const t=G.text,lines=t.pages[t.ix];
- rect(0,0,320,200,0);
- rect(6,6,308,188,1);rect(8,8,304,184,0);
- let y=Math.max(16,100-lines.length*6);
+ rect(0,0,Wl,Hl,0);
+ rect(6,6,Wl-12,Hl-12,1);rect(8,8,Wl-16,Hl-16,0);
+ let y=Math.max(16,120-lines.length*6);
  for(const ln of lines){txt(ln,20,y,15);y+=11;}
- txt("Enter...",260,182,8);
- txt((t.ix+1)+"/"+t.pages.length,16,182,8);
+ txt("Enter...",Wl-44,Hl-16,8);
+ txt((t.ix+1)+"/"+t.pages.length,16,Hl-16,8);
 }
 function drawTitle(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  /* starfield */
  let s=12345;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
- for(let i=0;i<70;i++){const x=rnd()*320,y=rnd()*120;rect(x,y,1,1,(i+(G.t>>4))%9===0?15:8);}
+ for(let i=0;i<70;i++){const x=rnd()*Wl,y=rnd()*90;rect(x,y,1,1,(i+(G.t>>4))%9===0?15:8);}
  /* museum silhouette */
- rect(60,92,200,38,8);poly([[160,62],[270,92],[50,92]],7);
- for(let i=0;i<6;i++)rect(76+i*32,100,10,30,0);
- rect(0,130,320,4,8);
+ rect(45,92,150,38,8);poly([[120,62],[203,92],[38,92]],7);
+ for(let i=0;i<6;i++)rect(57+i*24,100,7,30,0);
+ rect(0,130,Wl,4,8);
  ctxt("ECHOES OF THE",24,11,true);
  ctxt("ANCIENTS",40,14,true);
- ctxt("an original tribute to",142,7);
- ctxt("Legacy of the Ancients (1987)",152,7);
- if((G.t>>4)%2)ctxt("- press Enter -",172,15);
+ ctxt("an original tribute to",170,7);
+ ctxt("Legacy of the Ancients (1987)",182,7);
+ if((G.t>>4)%2)ctxt("- press Enter -",206,15);
 }
 function drawDead(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  ctxt("YOU HAVE FALLEN",70,12,true);
  ctxt("...but the Museum never loses a patron.",110,7);
  ctxt("press Enter",140,15);
 }
 function drawVictory(){
- rect(0,0,320,200,0);
+ rect(0,0,Wl,Hl,0);
  const t=G.t;
  for(let i=0;i<3;i++){
   const c=[9,12,10][i];
-  rect(96+i*52,60+Math.sin((t/20)+i*2)*6,24,24,c);
-  rect(102+i*52,66+Math.sin((t/20)+i*2)*6,12,12,15);
+  rect(72+i*39,60+Math.sin((t/20)+i*2)*6,18,18,c);
+  rect(77+i*39,66+Math.sin((t/20)+i*2)*6,9,9,15);
  }
  ctxt("THE CODEX IS BOUND",18,14,true);
  ctxt("Sapphire, Ruby and Emerald blaze in their settings.",104,7);
