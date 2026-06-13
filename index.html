@@ -14,24 +14,37 @@
   h1{font-size:15px;color:#ffd75f;letter-spacing:3px;margin:0;text-transform:uppercase}
   #sub{font-size:11px;color:#667}
   canvas{image-rendering:pixelated;border:3px solid #2a2a3a;border-radius:4px;max-width:100%;height:auto;outline:none}
-  #bar{display:flex;gap:8px}
+  #bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
   button{background:#1a1a2a;color:#aac;border:1px solid #334;padding:5px 12px;font-family:monospace;cursor:pointer;border-radius:3px}
   button:hover{background:#252540}
   #keys{font-size:11px;color:#556;max-width:660px;text-align:center;line-height:1.5}
   b{color:#889}
   /* --- touch controls --- */
-  #touch{display:none;width:100%;max-width:520px;justify-content:space-between;align-items:center;gap:10px;margin-top:2px}
+  #touch{display:none;width:100%;max-width:100%;justify-content:space-between;align-items:center;gap:12px;margin-top:4px;padding:0 6px;box-sizing:border-box}
   body.touch #touch{display:flex}
   body.touch #keys{display:none}
-  #dpad{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,56px);gap:4px}
-  .dbtn,.abtn{background:#1a1a2a;border:2px solid #36364e;border-radius:10px;color:#9ab;
-    font-family:monospace;font-size:20px;display:flex;align-items:center;justify-content:center;
+  body.touch #sub{display:none}
+  body.touch #wrap{padding:4px 0 max(10px,env(safe-area-inset-bottom)) 0;gap:4px}
+  body.touch canvas{border-width:2px;border-radius:2px;width:100%;box-sizing:border-box}
+  body.touch h1{font-size:13px;letter-spacing:2px;padding-top:4px}
+  body.touch button{padding:7px 14px;font-size:13px}
+  #dpad{display:grid;grid-template-columns:repeat(3,72px);grid-template-rows:repeat(3,72px);gap:5px}
+  .dbtn,.abtn{background:#1a1a2a;border:2px solid #36364e;border-radius:12px;color:#9ab;
+    font-family:monospace;font-size:26px;display:flex;align-items:center;justify-content:center;
     -webkit-tap-highlight-color:transparent;touch-action:none}
   .dbtn:active,.abtn:active{background:#3a3a5e;border-color:#66f}
   #abtns{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
-  .abtn{width:74px;height:54px;font-size:14px;letter-spacing:1px}
-  #btnA{background:#1d2a1d;border-color:#3a5e3a;color:#9f9;width:84px;height:64px;font-size:16px}
+  .abtn{width:88px;height:68px;font-size:15px;letter-spacing:1px}
+  #btnA{background:#1d2a1d;border-color:#3a5e3a;color:#9f9;width:100px;height:78px;font-size:19px}
   #btnB{background:#2a1d1d;border-color:#5e3a3a;color:#f99}
+  /* landscape: canvas left, controls right */
+  @media (orientation:landscape) and (max-height:600px){
+    body.touch #wrap{flex-direction:row;align-items:flex-start;flex-wrap:wrap;padding:0}
+    body.touch canvas{width:auto;height:100svh;flex-shrink:0}
+    body.touch #touch{flex-direction:column;width:auto;padding:8px;margin-top:0}
+    body.touch #bar{flex-direction:column;padding:4px}
+    body.touch h1{display:none}
+  }
   @media (max-width:700px){
     h1{font-size:12px;letter-spacing:2px}
     #sub{font-size:9px}
